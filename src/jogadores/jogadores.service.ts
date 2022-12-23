@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CriarJogadorDto } from './dto/criar-jogador.dto';
 import { Jogador } from './interfaces/jogadores.interfaces';
 import { v4 as uuid } from 'uuid';
@@ -11,12 +11,37 @@ export class JogadoresService {
   async criarAtualizarJogador(
     criarJogadorDto: CriarJogadorDto,
   ): Promise<Jogador> {
+    const { email } = criarJogadorDto;
     this.logger.log(`criaJogadorDto ${JSON.stringify(criarJogadorDto)}`);
+    const existeJogadores = this.jogadores.find(
+      (jogador) => jogador.email === email,
+    );
 
-    return this.criat(criarJogadorDto);
+    if (!existeJogadores) {
+      return this.criar(criarJogadorDto);
+    }
+    return this.atualizar(existeJogadores, criarJogadorDto);
   }
 
-  private criat(criarJogadorDto: CriarJogadorDto): Jogador {
+  async consultarJogadores(): Promise<Jogador[]> {
+    return this.lista();
+  }
+
+  async consultarPorEmail(email: string): Promise<Jogador> {
+    return this.encontrarPorEmail(email);
+  }
+
+  private lista(): Jogador[] {
+    return this.jogadores;
+  }
+
+  async deletarPorEmail(email: string): Promise<void> {
+    this.jogadores = this.jogadores.filter(
+      (jogador) => jogador.email !== email,
+    );
+  }
+
+  private criar(criarJogadorDto: CriarJogadorDto): Jogador {
     const { email, nome, telefoneCelular } = criarJogadorDto;
 
     const jogador: Jogador = {
@@ -30,6 +55,24 @@ export class JogadoresService {
     };
 
     this.jogadores.push(jogador);
+    return jogador;
+  }
+
+  private atualizar(
+    jogadorEncontrado: Jogador,
+    jogadorCriado: CriarJogadorDto,
+  ): Jogador {
+    const { nome } = jogadorCriado;
+    jogadorEncontrado.nome = nome;
+    return jogadorEncontrado;
+  }
+
+  encontrarPorEmail(email: string): Jogador {
+    const jogador = this.jogadores.find((jogador) => jogador.email === email);
+    if (!jogador?.email)
+      throw new NotFoundException(
+        'Não foi encontrado o jogador com o email informado',
+      );
     return jogador;
   }
 }
