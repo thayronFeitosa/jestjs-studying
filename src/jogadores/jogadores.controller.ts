@@ -11,7 +11,7 @@ import {
 import { CriarJogadorDto } from './dto/criar-jogador.dto';
 import { Jogador } from './interfaces/jogadores.interfaces';
 import { JogadoresService } from './jogadores.service';
-
+import { JogadoresValidacaoParametrosPipe } from './pipes/jogadores-validacao-parametros.pipe';
 @Controller('jogadores')
 export class JogadoresController {
   constructor(private readonly jogadorService: JogadoresService) {}
@@ -23,7 +23,7 @@ export class JogadoresController {
 
   @Get()
   async consultarJogadores(
-    @Query('email') email: string,
+    @Query('email', JogadoresValidacaoParametrosPipe) email: string,
   ): Promise<Jogador[] | Jogador> {
     if (email) {
       return this.jogadorService.consultarPorEmail(email);
@@ -32,7 +32,9 @@ export class JogadoresController {
   }
 
   @Delete()
-  async deletarJogadore(@Query('email') email: string): Promise<void> {
+  async deletarJogadore(
+    @Query('email', JogadoresValidacaoParametrosPipe) email: string,
+  ): Promise<void> {
     if (email) {
       this.jogadorService.consultarPorEmail(email);
     }
