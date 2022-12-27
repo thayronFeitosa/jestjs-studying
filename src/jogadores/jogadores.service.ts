@@ -1,51 +1,76 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { CriarJogadorDto } from './dto/criar-jogador.dto';
+import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { v4 as uuid } from 'uuid';
 import { Jogador } from './interfaces/jogadores.interfaces';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { CriarJogadorDto } from './dto/criar-jogador.dto';
+import {
+  AbstractRepository,
+  ICreate,
+  IDeleteByEmail,
+  IDeleteById,
+  IFindByEmail,
+  IFindById,
+  IListAll,
+  IUpdateById,
+} from './interfaces/contracts';
 
 @Injectable()
-export class JogadoresService {
+export class JogadoresService
+  implements
+    ICreate,
+    IUpdateById,
+    IListAll,
+    IFindById,
+    IFindByEmail,
+    IDeleteByEmail,
+    IDeleteById
+{
   constructor(
-    @InjectModel('jogador') private readonly jogadorModel: Model<Jogador>,
+    @Inject('AbstractRepository') private repositoryPlayer: AbstractRepository,
   ) {}
 
   private readonly logger = new Logger(JogadoresService.name);
 
-  async criarAtualizarJogador(
-    criarJogadorDto: CriarJogadorDto,
-  ): Promise<Jogador> {
-    const { email } = criarJogadorDto;
-    this.logger.log(`criaJogadorDto ${JSON.stringify(criarJogadorDto)}`);
+  async create(data: CriarJogadorDto): Promise<Jogador> {
+    const isAlreadyExists = await this.repositoryPlayer.findByEmail(data.email);
 
-    const existeJogadores = await this.jogadorModel.findOne({ email }).exec();
-
-    if (!existeJogadores) {
-      return await new this.jogadorModel(criarJogadorDto).save();
+    if (!isAlreadyExists) {
+      const dataCreate = {
+        _id: uuid(),
+        ...data,
+      };
+      return await this.repositoryPlayer.create(dataCreate);
     }
-    return this.atualizar(criarJogadorDto);
+    return isAlreadyExists;
   }
 
-  async consultarJogadores(): Promise<Jogador[]> {
-    return await this.jogadorModel.find().exec();
+  async updateById(_id: string, data: CriarJogadorDto): Promise<Jogador> {
+    return await this.repositoryPlayer.updateById(_id, data);
   }
 
-  async consultarPorEmail(email: string): Promise<Jogador> {
-    const jogador = await this.jogadorModel.findOne({ email }).exec();
-    if (!jogador)
+  async findById(_id: string): Promise<Jogador> {
+    const result = await this.repositoryPlayer.findById(_id);
+    return result;
+  }
+
+  async listAll(): Promise<Jogador[]> {
+    return await this.repositoryPlayer.listAll();
+  }
+
+  async findByEmail(email: string): Promise<Jogador> {
+    const player = await this.repositoryPlayer.findByEmail(email);
+    if (!player)
       throw new NotFoundException(
         'Não foi encontrado o jogador com o email informado',
       );
-    return jogador;
+    return player;
   }
 
-  async deletarPorEmail(email: string): Promise<any> {
-    return await this.jogadorModel.deleteOne({ email }).exec();
+  async deleteByEmail(email: string): Promise<any> {
+    return await this.repositoryPlayer.deleteByEmail(email);
   }
 
-  private async atualizar(criadJogadorDto: CriarJogadorDto): Promise<Jogador> {
-    return await this.jogadorModel
-      .findOneAndUpdate({ email: criadJogadorDto.email }, { criadJogadorDto })
-      .exec();
+  async deleteById(_id: string): Promise<any> {
+    const player = await this.repositoryPlayer.findById(_id);
+    return player;
   }
 }

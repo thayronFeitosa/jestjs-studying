@@ -1,7 +1,7 @@
 import {
+  PipeTransform,
   ArgumentMetadata,
   BadRequestException,
-  PipeTransform,
 } from '@nestjs/common';
 
 export class JogadoresValidacaoParametrosPipe implements PipeTransform {
@@ -11,6 +11,7 @@ export class JogadoresValidacaoParametrosPipe implements PipeTransform {
         `The value to parameter ${metadata.data} not informed `,
       );
     }
-    console.log(`value: ${value} metadata: ${metadata.data}`);
+
+    return value;
   }
 }
