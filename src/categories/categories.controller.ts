@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { CreateCategoriesDto } from './dto/createCategoriesDto';
-import { Categories } from './interfaces/categories.interfaces';
+import { Categories } from './contracts/interfaces/categories.interfaces';
 
 @Controller('api/v1/categories')
 export class CategoriesController {

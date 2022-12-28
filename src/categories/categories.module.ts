@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { CategoriesScheme } from './interfaces/categories.schema';
+import { CategoriesScheme } from './contracts/interfaces/categories.schema';
 
 import { CategoriesController } from './categories.controller';
 import { CategoriesService } from './categories.service';
-import { MongoRepository } from './interfaces/repository/MongoRepository';
+import { MongoRepository } from './repository/MongoRepository';
 
 @Module({
   imports: [

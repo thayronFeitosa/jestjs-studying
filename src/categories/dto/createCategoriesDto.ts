@@ -1,5 +1,5 @@
 import { IsString, IsNotEmpty, IsArray, ArrayMinSize } from 'class-validator';
-import { Event } from '../interfaces/categories.interfaces';
+import { Event } from '../contracts/interfaces/categories.interfaces';
 export class CreateCategoriesDto {
   @IsString()
   @IsNotEmpty()
