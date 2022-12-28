@@ -1,4 +1,4 @@
-import { CriarJogadorDto } from 'src/jogadores/dto/criar-jogador.dto';
+import { Player } from 'src/jogadores/dto/criar-jogador.dto';
 import { Jogador } from '../jogadores.interfaces';
 import { ICreate } from './ICreate';
 import { IDeleteByEmail } from './IDeleteByEmail';
@@ -18,11 +18,11 @@ export abstract class AbstractRepository
     IListAll,
     IUpdateById
 {
-  abstract create(data: CriarJogadorDto): Promise<Jogador>;
+  abstract create(data: Player): Promise<Jogador>;
   abstract deleteByEmail(email: string): Promise<any>;
   abstract deleteById(id: string): Promise<any>;
   abstract findByEmail(email: string): Promise<Jogador>;
   abstract findById(id: string): Promise<Jogador>;
   abstract listAll(): Promise<Jogador[]>;
-  abstract updateById(_id: string, data: CriarJogadorDto): Promise<Jogador>;
+  abstract updateById(_id: string, data: Player): Promise<Jogador>;
 }

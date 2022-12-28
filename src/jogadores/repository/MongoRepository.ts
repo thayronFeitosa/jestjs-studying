@@ -2,17 +2,19 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
-import { CriarJogadorDto } from '../dto/criar-jogador.dto';
+import { Player } from '../dto/criar-jogador.dto';
 import { AbstractRepository } from '../interfaces/contracts/AbstractRepository';
 import { Jogador } from '../interfaces/jogadores.interfaces';
 
 @Injectable()
-export class MongoRepository implements AbstractRepository {
+export class MongoRepository extends AbstractRepository {
   constructor(
     @InjectModel('jogador') private readonly repository: Model<Jogador>,
-  ) {}
+  ) {
+    super();
+  }
 
-  async create(data: CriarJogadorDto): Promise<Jogador> {
+  async create(data: Player): Promise<Jogador> {
     return (await this.repository.create(data)).save();
   }
 
@@ -41,7 +43,7 @@ export class MongoRepository implements AbstractRepository {
     return result;
   }
 
-  async updateById(_id: string, data: CriarJogadorDto): Promise<Jogador> {
+  async updateById(_id: string, data: Player): Promise<Jogador> {
     const result = await this.repository
       .findOneAndUpdate({ _id }, { $set: data })
       .exec();

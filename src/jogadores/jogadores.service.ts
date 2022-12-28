@@ -1,7 +1,13 @@
-import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Inject,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { v4 as uuid } from 'uuid';
 import { Jogador } from './interfaces/jogadores.interfaces';
-import { CriarJogadorDto } from './dto/criar-jogador.dto';
+import { Player } from './dto/criar-jogador.dto';
 import {
   AbstractRepository,
   ICreate,
@@ -30,7 +36,7 @@ export class JogadoresService
 
   private readonly logger = new Logger(JogadoresService.name);
 
-  async create(data: CriarJogadorDto): Promise<Jogador> {
+  async create(data: Player): Promise<Jogador> {
     const isAlreadyExists = await this.repositoryPlayer.findByEmail(data.email);
 
     if (!isAlreadyExists) {
@@ -43,7 +49,7 @@ export class JogadoresService
     return isAlreadyExists;
   }
 
-  async updateById(_id: string, data: CriarJogadorDto): Promise<Jogador> {
+  async updateById(_id: string, data: Player): Promise<Jogador> {
     return await this.repositoryPlayer.updateById(_id, data);
   }
 
@@ -69,8 +75,11 @@ export class JogadoresService
     return await this.repositoryPlayer.deleteByEmail(email);
   }
 
-  async deleteById(_id: string): Promise<any> {
-    const player = await this.repositoryPlayer.findById(_id);
-    return player;
+  async deleteById(_id: string): Promise<boolean> {
+    const player = await this.repositoryPlayer.deleteById(_id);
+    if (!player) {
+      throw new NotFoundException('User not found');
+    }
+    return !!player;
   }
 }
