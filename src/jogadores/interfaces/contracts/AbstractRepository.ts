@@ -1,22 +1,25 @@
+import {
+  ICreate,
+  IDeleteById,
+  IFindById,
+  IListAll,
+  IUpdateById,
+} from '@contracts/index';
 import { Player } from 'src/jogadores/dto/criar-jogador.dto';
 import { Jogador } from '../jogadores.interfaces';
-import { ICreate } from './ICreate';
+
 import { IDeleteByEmail } from './IDeleteByEmail';
-import { IDeleteById } from './IDeleteById';
 import { IFindByEmail } from './IFindByEmail';
-import { IFindById } from './IFindById';
-import { IListAll } from './IListAll';
-import { IUpdateById } from './IUpdateById';
 
 export abstract class AbstractRepository
   implements
-    ICreate,
+    ICreate<Jogador>,
     IDeleteByEmail,
     IDeleteById,
     IFindByEmail,
-    IFindById,
-    IListAll,
-    IUpdateById
+    IFindById<Jogador>,
+    IListAll<Jogador>,
+    IUpdateById<Jogador>
 {
   abstract create(data: Player): Promise<Jogador>;
   abstract deleteByEmail(email: string): Promise<any>;

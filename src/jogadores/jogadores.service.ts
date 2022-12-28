@@ -10,22 +10,24 @@ import { Jogador } from './interfaces/jogadores.interfaces';
 import { Player } from './dto/criar-jogador.dto';
 import {
   AbstractRepository,
-  ICreate,
   IDeleteByEmail,
-  IDeleteById,
   IFindByEmail,
-  IFindById,
-  IListAll,
-  IUpdateById,
 } from './interfaces/contracts';
+import {
+  ICreate,
+  IUpdateById,
+  IListAll,
+  IFindById,
+  IDeleteById,
+} from '@contracts/index';
 
 @Injectable()
 export class JogadoresService
   implements
-    ICreate,
-    IUpdateById,
-    IListAll,
-    IFindById,
+    ICreate<Jogador>,
+    IUpdateById<Jogador>,
+    IListAll<Jogador>,
+    IFindById<Jogador>,
     IFindByEmail,
     IDeleteByEmail,
     IDeleteById
@@ -55,6 +57,9 @@ export class JogadoresService
 
   async findById(_id: string): Promise<Jogador> {
     const result = await this.repositoryPlayer.findById(_id);
+    if (!result) {
+      throw new NotFoundException('User not found');
+    }
     return result;
   }
 
