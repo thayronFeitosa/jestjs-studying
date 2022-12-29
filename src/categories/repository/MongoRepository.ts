@@ -17,4 +17,8 @@ export class MongoRepository implements AbstractRepository {
   async findByCategory(categories: string): Promise<Categories> {
     return await this.repository.findOne({ categories }).exec();
   }
+
+  async listAll(): Promise<Categories[]> {
+    return await this.repository.find().exec();
+  }
 }

@@ -20,4 +20,8 @@ export class CategoriesService {
     }
     return await this.repository.create(createCategoriesDto as Categories);
   }
+
+  async listAll(): Promise<Categories[]> {
+    return await this.repository.listAll();
+  }
 }
