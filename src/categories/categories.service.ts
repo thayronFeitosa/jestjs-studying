@@ -1,4 +1,9 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateCategoriesDto } from './dto/createCategoriesDto';
 import { Categories } from './contracts/interfaces/categories.interfaces';
 import { AbstractRepository } from './contracts/AbstractRepository';
@@ -23,5 +28,22 @@ export class CategoriesService {
 
   async listAll(): Promise<Categories[]> {
     return await this.repository.listAll();
+  }
+
+  async findById(id: string): Promise<Categories> {
+    const category = await this.repository.findById(id);
+
+    if (!category) {
+      throw new NotFoundException('Categories not found');
+    }
+    return category;
+  }
+  async findCategory(categories: string): Promise<Categories> {
+    const category = await this.repository.findByNameCategory(categories);
+
+    if (!category) {
+      throw new NotFoundException('Categories not found');
+    }
+    return category;
   }
 }
