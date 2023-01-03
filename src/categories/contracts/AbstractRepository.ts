@@ -1,4 +1,4 @@
-import { ICreate, IListAll, IFindById } from '@contracts/index';
+import { ICreate, IListAll, IFindById, IUpdateById } from '@contracts/index';
 import { Injectable } from '@nestjs/common';
 import { IFindByCategory } from './IFindByCategory';
 import { IFindByNameCategory } from './IFindByNameCategory';
@@ -11,11 +11,13 @@ export abstract class AbstractRepository
     IFindByCategory,
     IListAll<Categories>,
     IFindById<Categories>,
-    IFindByNameCategory
+    IFindByNameCategory,
+    IUpdateById<Categories>
 {
   abstract create(data: Categories): Promise<Categories>;
   abstract findByCategory(categories: string): Promise<Categories>;
   abstract listAll(): Promise<Categories[]>;
   abstract findById(id: string): Promise<Categories>;
   abstract findByNameCategory(category: string): Promise<Categories>;
+  abstract updateById(id: string, data: Categories): Promise<Categories>;
 }

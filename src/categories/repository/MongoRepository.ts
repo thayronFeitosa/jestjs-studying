@@ -29,4 +29,12 @@ export class MongoRepository implements AbstractRepository {
   async findByNameCategory(categories: string): Promise<Categories> {
     return await this.repository.findOne({ categories }).exec();
   }
+
+  async updateById(_id: string, data: Categories): Promise<Categories> {
+    const result = await this.repository
+      .findOneAndUpdate({ _id }, { $set: data })
+      .exec();
+
+    return result;
+  }
 }
